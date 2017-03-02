@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@android:color/white"
+    tools:context="com.example.hitesh1bhutani.worldscountry_flagsquiz.MainActivity">
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_centerInParent="true"
+        android:background="@drawable/rapidfire_background"
+        android:id="@+id/rapidFire"
+        android:text="@string/rapidFire"
+        android:textSize="@dimen/mainText"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_above="@id/rapidFire"
+        android:id="@+id/countryToFlag"
+        android:text="@string/countryToFlag"
+        android:background="@drawable/countrytoflag_background"
+        android:textSize="@dimen/mainText"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_above="@id/countryToFlag"
+        android:textSize="@dimen/mainText"
+        android:text="@string/flagToCountry"
+        android:background="@drawable/main_button_shape"
+        android:id="@+id/flagToCountry"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_below="@id/rapidFire"
+        android:id="@+id/highScores"
+        android:text="@string/highScores"
+        android:background="@drawable/high_score_background"
+        android:textSize="@dimen/mainText"
+        android:textStyle="bold"
+        android:textColor="@android:color/white" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_below="@id/highScores"
+        android:id="@+id/exit"
+        android:text="@string/exitApp"
+        android:background="@drawable/exit_background"
+        android:textSize="@dimen/mainText"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"/>
+
+</RelativeLayout>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/activityBackground">
+
+    <ProgressBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="10000"
+        android:progress="10000"
+        android:id="@+id/progressBarRF"
+        style="@android:style/Widget.ProgressBar.Horizontal"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="4">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/activity_horizontal_margin_into_two"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin_into_two"
+            android:layout_marginTop="@dimen/activity_horizontal_margin_into_two"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/countryFlagRF"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"/>
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="@dimen/activity_horizontal_margin_into_two" >
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/optionOneRF"
+            android:textStyle="bold"
+            android:textSize="@dimen/quizMainTextSize"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/optionTwoRF"
+            android:textStyle="bold"
+            android:textSize="@dimen/quizMainTextSize"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/optionThreeRF"
+            android:textStyle="bold"
+            android:textSize="@dimen/quizMainTextSize"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/optionFourRF"
+            android:textStyle="bold"
+            android:textSize="@dimen/quizMainTextSize"/>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/totalScore"
+            android:textSize="@dimen/textSize"
+            android:layout_centerInParent="true"
+            android:textColor="@android:color/white"/>
+
+    </RelativeLayout>
+
+</LinearLayout>
