@@ -1,4 +1,4 @@
-package com.example.hitesh1bhutani.worldscountry_flagsquiz;
+package unknown.hittsss.hitesh1bhutani.worldscountry_flagsquiz;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -8,19 +8,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;

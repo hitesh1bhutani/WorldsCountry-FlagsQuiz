@@ -1,4 +1,4 @@
-package com.example.hitesh1bhutani.worldscountry_flagsquiz;
+package unknown.hittsss.hitesh1bhutani.worldscountry_flagsquiz;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -16,10 +16,11 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,7 +31,7 @@ import java.util.Random;
  */
 public class QuizMain extends Activity implements View.OnClickListener {
 
-    private static int _oceanFlag, _countryPosition;
+    private static int _oceanFlag, _countryPosition, isShowAd;
     private ArrayList<String> optionsList;
     private Button optionOne, optionTwo, optionThree, optionFour;
     private String actualCountryName;
@@ -38,11 +39,15 @@ public class QuizMain extends Activity implements View.OnClickListener {
     private ArrayList<Button> buttonList;
     private Bundle bundle;
     private CountDownTimer countDownTimer;
+    private InterstitialAd mInterstitialAd;
+    private SharedPreferences sharedPreferences;
+    private boolean nextOrPrevious;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.quizmain);
+        if(checkWhetherToLoadAddOrNot()) loadAd();
         bundle=getIntent().getExtras();
         _oceanFlag=bundle.getInt(getResources().getString(R.string.ocean));
         _countryPosition=bundle.getInt(getResources().getString(R.string.itemPosition));
@@ -50,6 +55,30 @@ public class QuizMain extends Activity implements View.OnClickListener {
         createOptionList();
         setButtons();
         setButtonText(optionsList);
+    }
+
+    private void loadAd() {
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId(getResources().getString(R.string.interstitial_ad_unit_id));
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                requestNewInterstitial();
+                nextQuestion();
+            }
+        });
+        requestNewInterstitial();
+    }
+
+    private void requestNewInterstitial() {
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mInterstitialAd.loadAd(adRequest);
+    }
+
+    private boolean checkWhetherToLoadAddOrNot() {
+        sharedPreferences= PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        isShowAd = sharedPreferences.getInt(getResources().getString(R.string.displayInterstitialAd), 1);
+        return isShowAd >= 5;
     }
 
     private void setButtons(){
@@ -169,39 +198,51 @@ public class QuizMain extends Activity implements View.OnClickListener {
                 checkAnswer(((Button) v).getText().toString(), R.id.optionFour);
                 break;
             case R.id.next:
-                nextQuestion(0);
+                nextOrPrevious = false;
+                nextQuestion();
                 break;
             case R.id.previous:
-                nextQuestion(1);
+                nextOrPrevious = true;
+                nextQuestion();
                 break;
         }
     }
 
-    private void nextQuestion(int nextOrPrevious) {
+    private void nextQuestion() {
         try{
             countDownTimer.cancel();
         } catch (Exception e){
             e.getMessage();
         }
-        Intent newIntent=new Intent(getApplicationContext(),QuizMain.class);
-        bundle=new Bundle();
-        bundle.putInt(getResources().getString(R.string.ocean),_oceanFlag);
-        if(nextOrPrevious==0){
-            if(actualCountryNameId.length<=_countryPosition+1){
-                bundle.putInt(getResources().getString(R.string.itemPosition),0);
-            } else {
-                bundle.putInt(getResources().getString(R.string.itemPosition),_countryPosition+1);
+        final SharedPreferences.Editor edit = sharedPreferences.edit();
+        if (mInterstitialAd!=null && mInterstitialAd.isLoaded()) {
+            mInterstitialAd.show();
+            isShowAd = 0;
+            edit.putInt(getResources().getString(R.string.displayInterstitialAd), isShowAd);
+        } else {
+            isShowAd = isShowAd + 1;
+            edit.putInt(getResources().getString(R.string.displayInterstitialAd), isShowAd);
+            Intent newIntent=new Intent(getApplicationContext(),QuizMain.class);
+            bundle=new Bundle();
+            bundle.putInt(getResources().getString(R.string.ocean),_oceanFlag);
+            if(nextOrPrevious){
+                if(actualCountryNameId.length<=_countryPosition+1){
+                    bundle.putInt(getResources().getString(R.string.itemPosition),0);
+                } else {
+                    bundle.putInt(getResources().getString(R.string.itemPosition),_countryPosition+1);
+                }
+            } else{
+                if(_countryPosition-1<0){
+                    bundle.putInt(getResources().getString(R.string.itemPosition),actualCountryNameId.length-1);
+                } else {
+                    bundle.putInt(getResources().getString(R.string.itemPosition),_countryPosition-1);
+                }
             }
-        } else{
-            if(_countryPosition-1<0){
-                bundle.putInt(getResources().getString(R.string.itemPosition),actualCountryNameId.length-1);
-            } else {
-                bundle.putInt(getResources().getString(R.string.itemPosition),_countryPosition-1);
-            }
+            newIntent.putExtras(bundle);
+            startActivity(newIntent);
+            finish();
         }
-        newIntent.putExtras(bundle);
-        startActivity(newIntent);
-        finish();
+        edit.apply();
     }
 
     private void checkAnswer(String userAnswer, int ButtonId) {
@@ -219,26 +260,31 @@ public class QuizMain extends Activity implements View.OnClickListener {
             animationDrawable.addFrame(new ColorDrawable(Color.GREEN), 500);
             btn.setBackground(animationDrawable);
             animationDrawable.start();
-            final Random random = new Random();
-            final String winner =
-                    getResources().getStringArray(R.array.win)[random.nextInt(5)] + getResources().getString(R.string.nextQuestionIn);
-            countDownTimer = new CountDownTimer(4000, 1000) {
-                @Override
-                public void onTick(long millisUntilFinished) {
-                    TextView win = (TextView) findViewById(R.id.win);
-                    final Typeface typeface = Typeface.createFromAsset(getAssets(), "Candara.ttf");
-                    win.setTypeface(typeface);
-                    String won = winner + String.valueOf(Math.ceil(millisUntilFinished / 1000));
-                    win.setVisibility(View.VISIBLE);
-                    win.setText(won);
-                }
+            if(mInterstitialAd!=null && mInterstitialAd.isLoaded()){
+                nextQuestion();
+            } else {
+                final Random random = new Random();
+                final String winner =
+                        getResources().getStringArray(R.array.win)[random.nextInt(5)] + getResources().getString(R.string.nextQuestionIn);
+                countDownTimer = new CountDownTimer(4000, 1000) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+                        TextView win = (TextView) findViewById(R.id.win);
+                        final Typeface typeface = Typeface.createFromAsset(getAssets(), "Candara.ttf");
+                        win.setTypeface(typeface);
+                        String won = winner + String.valueOf(Math.ceil(millisUntilFinished / 1000));
+                        win.setVisibility(View.VISIBLE);
+                        win.setText(won);
+                    }
 
-                @Override
-                public void onFinish() {
-                    nextQuestion(0);
-                }
-            };
-            countDownTimer.start();
+                    @Override
+                    public void onFinish() {
+                        nextOrPrevious = false;
+                        nextQuestion();
+                    }
+                };
+                countDownTimer.start();
+            }
         } else {
             btn.setBackgroundColor(Color.RED);
             final Animation shake=AnimationUtils.loadAnimation(getApplicationContext(),R.anim.shake);
@@ -249,7 +295,6 @@ public class QuizMain extends Activity implements View.OnClickListener {
     }
 
     private void addToSharedPreferences(int countryPosition) {
-        final SharedPreferences sharedPreferences= PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         final boolean trueOrFalse = sharedPreferences.getBoolean(
                 getResources().getStringArray(StringArray.getStringArrayFromResources(_oceanFlag))[countryPosition],false);
         final SharedPreferences.Editor edit=sharedPreferences.edit();

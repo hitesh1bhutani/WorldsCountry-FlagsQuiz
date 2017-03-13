@@ -1,11 +1,13 @@
-package com.example.hitesh1bhutani.worldscountry_flagsquiz;
+package unknown.hittsss.hitesh1bhutani.worldscountry_flagsquiz;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -15,6 +17,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -28,17 +34,19 @@ public class CountryToFlagQuiz extends Activity implements View.OnClickListener 
     private static int[] _covers;
     private ArrayList<Integer> _allCoversList, _optionsList;
     private ImageView[] _optionPane;
-    private static int _position, _oceanName;
+    private static int _position, _oceanName, isShowAd;
     private String _questionCountryName;
     private Random random;
     private Bundle bundle;
     private CountDownTimer countDownTimer;
     private ImageView _optionOne, _optionTwo, _optionThree, _optionFour;
+    private InterstitialAd mInterstitialAd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.countrytoflagquiz);
+        if(checkWhetherToLoadAddOrNot()) loadAd();
         bundle = getIntent().getExtras();
         _oceanName = bundle.getInt(getResources().getString(R.string.ocean));
         initializeImageViews();
@@ -50,6 +58,33 @@ public class CountryToFlagQuiz extends Activity implements View.OnClickListener 
         prepareCovers(_oceanName);
         prepareOptionsList(_allCoversList);
         setOptions(_optionPane, _optionsList, _questionCountryName, _covers, _position);
+    }
+
+    private void loadAd() {
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                requestNewInterstitial();
+                nextQuestion();
+            }
+        });
+        requestNewInterstitial();
+    }
+
+    private void requestNewInterstitial() {
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice("D9XXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+                .build();
+
+        mInterstitialAd.loadAd(adRequest);
+    }
+
+    private boolean checkWhetherToLoadAddOrNot() {
+        final SharedPreferences sharedPreferences= PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        isShowAd = sharedPreferences.getInt(getResources().getString(R.string.displayInterstitialAdCTF), 1);
+        return isShowAd >= 5;
     }
 
     private void setOptions(ImageView[] optionPane, ArrayList<Integer> optionsList, String questionCountryName, int[] covers, int position) {
@@ -94,7 +129,6 @@ public class CountryToFlagQuiz extends Activity implements View.OnClickListener 
             allCoversList.remove(newNumber);
         }
     }
-
 
     private void prepareCovers(int oceanName) {
         _covers=PrepareList.countryNameListMain(oceanName);
@@ -250,29 +284,32 @@ public class CountryToFlagQuiz extends Activity implements View.OnClickListener 
             animation.setDuration(500);
             animation.setRepeatMode(Animation.REVERSE);
             btn.startAnimation(animation);
-            final String winner =
-                    getResources().getStringArray(R.array.win)[random.nextInt(5)] + getResources().getString(R.string.nextQuestionIn);
-            countDownTimer = new CountDownTimer(4000, 1000) {
-                @Override
-                public void onTick(long millisUntilFinished) {
-                    final TextView win = (TextView) findViewById(R.id.winCTF);
-                    final Typeface typeface = Typeface.createFromAsset(getAssets(), "Candara.ttf");
-                    win.setTypeface(typeface);
-                    final String won = winner + String.valueOf(Math.ceil(millisUntilFinished / 1000));
-                    win.setVisibility(View.VISIBLE);
-                    win.setText(won);
-                }
+            if(mInterstitialAd!=null && mInterstitialAd.isLoaded()) nextQuestion();
+            else {
+                final String winner =
+                        getResources().getStringArray(R.array.win)[random.nextInt(5)] + getResources().getString(R.string.nextQuestionIn);
+                countDownTimer = new CountDownTimer(4000, 1000) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+                        final TextView win = (TextView) findViewById(R.id.winCTF);
+                        final Typeface typeface = Typeface.createFromAsset(getAssets(), "Candara.ttf");
+                        win.setTypeface(typeface);
+                        final String won = winner + String.valueOf(Math.ceil(millisUntilFinished / 1000));
+                        win.setVisibility(View.VISIBLE);
+                        win.setText(won);
+                    }
 
-                @Override
-                public void onFinish() {
-                    nextQuestion();
-                }
-            };
+                    @Override
+                    public void onFinish() {
+                        nextQuestion();
+                    }
+                };
+                countDownTimer.start();
+            }
             _optionOne.setClickable(false);
             _optionTwo.setClickable(false);
             _optionThree.setClickable(false);
             _optionFour.setClickable(false);
-            countDownTimer.start();
         } else {
             final Vibrator vibe= (Vibrator) getSystemService(getApplicationContext().VIBRATOR_SERVICE);
             vibe.vibrate(100);
@@ -288,11 +325,22 @@ public class CountryToFlagQuiz extends Activity implements View.OnClickListener 
         } catch (Exception e){
             e.getMessage();
         }
-        Intent newActivity=new Intent(getApplicationContext(),CountryToFlagQuiz.class);
-        bundle=new Bundle();
-        bundle.putInt(getResources().getString(R.string.ocean),_oceanName);
-        newActivity.putExtras(bundle);
-        startActivity(newActivity);
-        finish();
+        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        final SharedPreferences.Editor edit = sharedPreferences.edit();
+        if (mInterstitialAd!=null && mInterstitialAd.isLoaded()) {
+            mInterstitialAd.show();
+            isShowAd = 0;
+            edit.putInt(getResources().getString(R.string.displayInterstitialAd), isShowAd);
+        } else {
+            isShowAd = isShowAd + 1;
+            edit.putInt(getResources().getString(R.string.displayInterstitialAdCTF), isShowAd);
+            Intent newActivity = new Intent(getApplicationContext(), CountryToFlagQuiz.class);
+            bundle = new Bundle();
+            bundle.putInt(getResources().getString(R.string.ocean), _oceanName);
+            newActivity.putExtras(bundle);
+            startActivity(newActivity);
+            finish();
+        }
+        edit.apply();
     }
 }

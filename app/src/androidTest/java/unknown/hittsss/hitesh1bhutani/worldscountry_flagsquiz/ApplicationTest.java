@@ -1,4 +1,4 @@
-package com.example.hitesh1bhutani.worldscountry_flagsquiz;
+package unknown.hittsss.hitesh1bhutani.worldscountry_flagsquiz;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

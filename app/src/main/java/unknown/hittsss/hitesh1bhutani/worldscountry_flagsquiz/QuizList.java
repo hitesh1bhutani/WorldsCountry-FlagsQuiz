@@ -1,4 +1,4 @@
-package com.example.hitesh1bhutani.worldscountry_flagsquiz;
+package unknown.hittsss.hitesh1bhutani.worldscountry_flagsquiz;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -47,11 +47,6 @@ public class QuizList extends Activity{
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent newIntent = new Intent(getApplicationContext(), ChooseOcean.class);
-                bundle=new Bundle();
-                bundle.putInt(getResources().getString(R.string.quizType),1);
-                newIntent.putExtras(bundle);
-                startActivity(newIntent);
                 finish();
             }
         });
@@ -64,7 +59,7 @@ public class QuizList extends Activity{
 
         RecyclerView.LayoutManager mLayoutManager=new GridLayoutManager(this, 3);
         recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.addItemDecoration(new GridSpacingItemDecoration(3, dpToPx(15), true));
+        recyclerView.addItemDecoration(new GridSpacingItemDecoration(3, dpToPx(20), true));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), new RecyclerViewClickListener(){

@@ -1,15 +1,17 @@
-package com.example.hitesh1bhutani.worldscountry_flagsquiz;
+package unknown.hittsss.hitesh1bhutani.worldscountry_flagsquiz;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -23,13 +25,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
+import com.unity3d.ads.IUnityAdsListener;
+import com.unity3d.ads.UnityAds;
+
 /**
  * Created by hitesh1bhutani on 18-02-2017.
  */
 public class RapidFire extends Activity implements View.OnClickListener {
 
     private ArrayList<String> optionsList;
-    private int _answerNumber, finalTotalScore=0;
+    private int _answerNumber, finalTotalScore=0, totalScoreInstance;
     private Button optionOne, optionTwo, optionThree, optionFour;
     private Random random;
     private ArrayList<Button> buttonList;
@@ -38,17 +43,26 @@ public class RapidFire extends Activity implements View.OnClickListener {
     private ProgressBar progressBar;
     private CountDownTimer count;
     private TextView totalScore;
-    private int totalScoreInstance;
+    private long countDownStartTimer;
     private String names[];
     private int score[];
+    final private UnityAdsListener unityAdsListener = new UnityAdsListener();
+    private SoundPool soundPool;
+    private int play;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.rapidfire);
+        if(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean(getResources().getString(R.string.isVolumeEnabled), true)){
+            soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC,0);
+            play = soundPool.load(this, R.raw.cheer, 1);
+        }
+        initializeAds();
         progressBar= (ProgressBar) findViewById(R.id.progressBarRF);
+        progressBar.getIndeterminateDrawable().setColorFilter(Color.GREEN, PorterDuff.Mode.MULTIPLY);
         addSharedPrefs(-1);
-        setCountDownTimer();
+        setCountDownTimer(10000, 1);
         createOptionsList();
         setButtons();
         setButtonsText();
@@ -60,10 +74,11 @@ public class RapidFire extends Activity implements View.OnClickListener {
         setTotalScore(totalScoreString, finalTotalScore, 50);
     }
 
-    private void setCountDownTimer() {
-        count=new CountDownTimer(10000,1) {
+    private void setCountDownTimer(long start, int interval) {
+        count=new CountDownTimer(start,interval) {
             @Override
             public void onTick(long millisUntilFinished) {
+                countDownStartTimer = millisUntilFinished;
                 final int progress = (int) (millisUntilFinished);
                 progressBar.setProgress(progress);
                 setTotalScore(getResources().getString(R.string.totalScore), finalTotalScore, (int)Math.floor(millisUntilFinished/200));
@@ -243,7 +258,7 @@ public class RapidFire extends Activity implements View.OnClickListener {
         if(((Button) v).getText().toString().equalsIgnoreCase(answer)) {
             if(numberList.size()!=0){
                 finalTotalScore = totalScoreInstance;
-                setCountDownTimer();
+                setCountDownTimer(10000, 1);
                 createOptionsList();
                 setButtonsText();
                 prepareCovers(_answerNumber);
@@ -254,18 +269,58 @@ public class RapidFire extends Activity implements View.OnClickListener {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         count.cancel();
-        finish();
+        final AlertDialog.Builder di = new AlertDialog.Builder(RapidFire.this);
+        di.setTitle(R.string.quitGame);
+        di.setMessage(R.string.sureToQuitGame);
+        di.setCancelable(false);
+        di.setNegativeButton(R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                showAds();
+                finish();
+            }
+        });
+        di.setPositiveButton(R.string.no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                setCountDownTimer(countDownStartTimer, 1);
+            }
+        });
+        di.show();
+    }
+
+    private void initializeAds(){
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        if(sharedPreferences.getBoolean(getResources().getString(R.string.isUnityDisplay), true))
+        {
+            if(!UnityAds.isInitialized()) UnityAds.initialize(this, getResources().getString(R.string.unityId), unityAdsListener);
+        }
+    }
+
+    private void showAds(){
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        if(sharedPreferences.getBoolean(getResources().getString(R.string.isUnityDisplay), true)) {
+            if (UnityAds.isReady()) {
+                UnityAds.show(this);
+                SharedPreferences.Editor edit = sharedPreferences.edit();
+                edit.putBoolean(getResources().getString(R.string.isUnityDisplay), false);
+                edit.apply();
+            }
+        } else{
+            SharedPreferences.Editor edit = sharedPreferences.edit();
+            edit.putBoolean(getResources().getString(R.string.isUnityDisplay), true);
+            edit.apply();
+        }
     }
 
     private void showDialogBox(final String title, final String message) {
-        final SoundPool soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC,0);
-        soundPool.play(soundPool.load(this, R.raw.cheer, 1), 1, 1, 0, 0, 1);
         final AlertDialog.Builder dialog = new AlertDialog.Builder(RapidFire.this);
         dialog.setTitle(title);
         dialog.setCancelable(false);
         if(checkHighScore()){
+            if(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean(getResources().getString(R.string.isVolumeEnabled), true))
+                soundPool.play(play, 1, 1, 0, 0, 1);
             dialog.setMessage(R.string.scoredHighScore);
             final LinearLayout layout=new LinearLayout(getApplicationContext());
             layout.setOrientation(LinearLayout.VERTICAL);
@@ -298,7 +353,7 @@ public class RapidFire extends Activity implements View.OnClickListener {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     finalTotalScore = 0;
-                    setCountDownTimer();
+                    setCountDownTimer(10000, 1);
                     createOptionsList();
                     setButtonsText();
                     prepareCovers(_answerNumber);
@@ -309,6 +364,7 @@ public class RapidFire extends Activity implements View.OnClickListener {
             dialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+                    showAds();
                     finish();
                 }
             });
@@ -324,7 +380,7 @@ public class RapidFire extends Activity implements View.OnClickListener {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 finalTotalScore = 0;
-                setCountDownTimer();
+                setCountDownTimer(10000, 1);
                 createOptionsList();
                 setButtonsText();
                 prepareCovers(_answerNumber);
@@ -336,6 +392,7 @@ public class RapidFire extends Activity implements View.OnClickListener {
         di.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                showAds();
                 finish();
             }
         });
@@ -375,14 +432,15 @@ public class RapidFire extends Activity implements View.OnClickListener {
         final SharedPreferences preferences=getApplicationContext().getSharedPreferences(getApplicationContext().getString(R.string.highScores), MODE_PRIVATE);
         names=new String[10];
         score=new int[10];
+        boolean submit = false;
         for (int x=0; x<10; x++)
         {
             names[x]=preferences.getString("name"+x, "-");
             score[x] = preferences.getInt("score"+x, 0);
             if(score[x]==0) return true;
-            if(score[x]<finalTotalScore) return true;
+            if(score[x]<finalTotalScore) submit = true;
         }
-        return false;
+        return submit;
     }
 
     private void addSharedPrefs(int number){
@@ -398,5 +456,28 @@ public class RapidFire extends Activity implements View.OnClickListener {
         final int finalTotalScoreIteration = Score + currentScore;
         totalScore.setText(totalScoreString + Score + " + " + currentScore + " = " + finalTotalScoreIteration);
         totalScoreInstance = finalTotalScoreIteration;
+    }
+
+    private class UnityAdsListener implements IUnityAdsListener{
+
+        @Override
+        public void onUnityAdsReady(String s) {
+
+        }
+
+        @Override
+        public void onUnityAdsStart(String s) {
+
+        }
+
+        @Override
+        public void onUnityAdsFinish(String s, UnityAds.FinishState finishState) {
+
+        }
+
+        @Override
+        public void onUnityAdsError(UnityAds.UnityAdsError unityAdsError, String s) {
+
+        }
     }
 }

@@ -1,4 +1,4 @@
-package com.example.hitesh1bhutani.worldscountry_flagsquiz;
+package unknown.hittsss.hitesh1bhutani.worldscountry_flagsquiz;
 
 /**
  * Created by hitesh1bhutani on 06-02-2017.

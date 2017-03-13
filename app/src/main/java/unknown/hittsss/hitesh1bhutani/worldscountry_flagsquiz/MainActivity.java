@@ -1,24 +1,33 @@
-package com.example.hitesh1bhutani.worldscountry_flagsquiz;
+package unknown.hittsss.hitesh1bhutani.worldscountry_flagsquiz;
 
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.Typeface;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Display;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.Space;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private InterstitialAd mInterstitialAd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +35,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         initialize();
         getRating();
+        loadAd();
+    }
+
+    private void loadAd() {
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                requestNewInterstitial();
+                finish();
+            }
+        });
+        requestNewInterstitial();
+    }
+
+    private void requestNewInterstitial() {
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice("D9XXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+                .build();
+
+        mInterstitialAd.loadAd(adRequest);
     }
 
     private void getRating(){
@@ -64,6 +95,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    private void shareApp()
+    {
+        final String appPackageName = getPackageName();
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_SUBJECT, R.string.app_name);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, "Check out this Resume of Hitesh Bhutani at: https://play.google.com/store/apps/details?id=" + appPackageName);
+        sendIntent.setType("text/plain");
+        sendIntent.createChooser(sendIntent, "Choose client");
+        startActivity(sendIntent);
+    }
+
     private void increaseRatingNumber(SharedPreferences sharedPreferences){
         final int rating = sharedPreferences.getInt(getResources().getString(R.string.getRating), 0) + 1;
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -96,6 +139,46 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         rapidFire.setOnClickListener(this);
         exit.setOnClickListener(this);
         highScore.setOnClickListener(this);
+        final ImageView share = (ImageView) findViewById(R.id.share);
+        share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                shareApp();
+            }
+        });
+        final ImageView rate = (ImageView) findViewById(R.id.rating);
+        rate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                launchMarket();
+            }
+        });
+        final ImageView sound = (ImageView) findViewById(R.id.volume);
+        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        drawableChange(sound, sharedPreferences.getBoolean(getResources().getString(R.string.isVolumeEnabled), true));
+        sound.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                if(sharedPreferences.getBoolean(getResources().getString(R.string.isVolumeEnabled), true)){
+                    editor.putBoolean(getResources().getString(R.string.isVolumeEnabled), false);
+                    drawableChange(sound, sharedPreferences.getBoolean(getResources().getString(R.string.isVolumeEnabled), true));
+                }
+                else {
+                    editor.putBoolean(getResources().getString(R.string.isVolumeEnabled), true);
+                    drawableChange(sound, false);
+                }
+                editor.apply();
+            }
+        });
+
+    }
+
+    private void drawableChange(ImageView sound, boolean indicator) {
+        if(indicator)
+            sound.setImageResource(R.drawable.ic_volume_up_indicator);
+        else
+            sound.setImageResource(R.drawable.ic_volume_off_indicator);
     }
 
     @Override
@@ -131,7 +214,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(newIntent);
                 break;
             case R.id.exit:
-                finish();
+                if(mInterstitialAd!=null && mInterstitialAd.isLoaded()) mInterstitialAd.show();
+                else finish();
                 break;
         }
     }
@@ -139,6 +223,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        finish();
+        if(mInterstitialAd!=null && mInterstitialAd.isLoaded()) mInterstitialAd.show();
+        else finish();
     }
 }
