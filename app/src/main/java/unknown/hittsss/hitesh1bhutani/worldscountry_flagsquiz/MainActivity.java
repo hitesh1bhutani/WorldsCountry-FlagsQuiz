@@ -53,7 +53,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void requestNewInterstitial() {
         AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice("D9XXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
                 .build();
 
         mInterstitialAd.loadAd(adRequest);
@@ -101,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
         sendIntent.putExtra(Intent.EXTRA_SUBJECT, R.string.app_name);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, "Check out this Resume of Hitesh Bhutani at: https://play.google.com/store/apps/details?id=" + appPackageName);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, "Check out this cool World's Country - Flags Quiz at: https://play.google.com/store/apps/details?id=" + appPackageName);
         sendIntent.setType("text/plain");
         sendIntent.createChooser(sendIntent, "Choose client");
         startActivity(sendIntent);
@@ -162,11 +161,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 if(sharedPreferences.getBoolean(getResources().getString(R.string.isVolumeEnabled), true)){
                     editor.putBoolean(getResources().getString(R.string.isVolumeEnabled), false);
-                    drawableChange(sound, sharedPreferences.getBoolean(getResources().getString(R.string.isVolumeEnabled), true));
+                    drawableChange(sound, false);
                 }
                 else {
                     editor.putBoolean(getResources().getString(R.string.isVolumeEnabled), true);
-                    drawableChange(sound, false);
+                    drawableChange(sound, true);
                 }
                 editor.apply();
             }
