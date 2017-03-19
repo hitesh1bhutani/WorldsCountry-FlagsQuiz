@@ -37,6 +37,18 @@
     <string name="rateLater">Rate Later</string>
     <string name="noHighScore">No High Score till now. \nPlay Rapid Fire to set a new High Score !!</string>
     <string name="ok">OK</string>
+    <string name="interstitial_ad_unit_id">ca-app-pub-2351441944226667/7158524633</string>
+    <string name="displayInterstitialAd">Is Interstitial Ad Displayed ?</string>
+    <string name="displayInterstitialAdCTF">Is Displayed ?</string>
+    <string name="quitGame">Quit Game !</string>
+    <string name="sureToQuitGame">Are you sure you want to quit the game ?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="unityId">1341067</string>
+    <string name="isUnityDisplay">Unity Ads Display</string>
+    <string name="isVolumeEnabled">Is Volume Enabled</string>
+    <string name="isRatingProvided">Rating is already been given</string>
+    <string name="shareApplicationString">Check out this cool World\'s Country - Flag Quiz to learn flags from all the world at: https://play.google.com/store/apps/details?id=</string>
 
     <string-array name="win">
         <item>Voila !!</item>

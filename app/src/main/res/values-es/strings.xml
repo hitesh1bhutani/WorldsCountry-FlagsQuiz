@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="countryToFlag">País >> Bandera</string>
+    <string name="flagToCountry">Bandera >> País</string>
+    <string name="exitApp">Salida</string>
+    <string name="submit">Someter</string>
+    <string name="quizType">Tipo De Prueba</string>
+    <string name="ocean">Océano</string>
+    <string name="nextQuestion">Próxima Pregunta</string>
+    <string name="home">Hogar</string>
+    <string name="previous">Previo</string>
+    <string name="next">Próxima</string>
+    <string name="rapidFire">Fuego Rápido</string>
+    <string name="highScores">Puntajes Altos</string>
+    <string name="totalScore">Total Puntaje: </string>
+    <string name="timeIsUp">El tiempo ha terminado</string>
+    <string name="fullHouse">Casa Llena !!!</string>
+
+
+    <string name="gotItWrong">Man! You got this one wrong ..</string>
+    <string name="anotherShot">Do you wanna give yourself another shot ?</string>
+    <string name="competeWithYourself">Do you wanna beat your own score ?</string>
+
+
+    <string name="name">Nombre</string>
+    <string name="cancel">Cancelar</string>
+    <string name="highScoreValues">Valores de Alto Puntaje</string>
+    <string name="highScoreNames">Nombres de Alto Puntaje</string>
+    <string name="start">Comenzar</string>
+    <string name="score">Puntaje</string>
+    <string name="serialNumber">Número De Serie</string>
+    <string name="nextQuestionIn">Próxima Pregunta En:</string>
+
+    <string name="scoredHighScore">You\'ve just scored High Score !! \nEnter your name ..</string>
+
+    <string name="getRating">Rating</string>
+
+    <string name="rateUs">Tarifa Nos !!</string>
+
+    <string name="feedBack">You are important to us. Please provide your valuable feedback.</string>
+
+    <string name="rateNow">Tarifa Ahora</string>
+    <string name="rateLater">Tarifa Después</string>
+
+    <string name="noHighScore">No High Score till now. \nPlay Rapid Fire to set a new High Score !!</string>
+
+    <string name="ok">OK</string>
+    <string name="interstitial_ad_unit_id">ca-app-pub-2351441944226667/7158524633</string>
+    <string name="displayInterstitialAd">Is Interstitial Ad Displayed ?</string>
+    <string name="displayInterstitialAdCTF">Is Displayed ?</string>
+    <string name="quitGame">Quit Game !</string>
+    <string name="sureToQuitGame">Are you sure you want to quit the game ?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="unityId">1341067</string>
+    <string name="isUnityDisplay">Unity Ads Display</string>
+    <string name="isVolumeEnabled">Is Volume Enabled</string>
+    <string name="isRatingProvided">Rating is already been given</string>
+    <string name="shareApplicationString">Check out this cool World\'s Country - Flag Quiz to learn flags from all the world at: https://play.google.com/store/apps/details?id=</string>
+
+
+</resources>
