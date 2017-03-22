@@ -152,6 +152,83 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 launchMarket();
             }
         });
+        final ImageView settings = (ImageView) findViewById(R.id.changeSettings);
+        settings.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                showSettings();
+            }
+            
+            private void showSettings(){
+                final AlertDialog.Builder alertSettings = new AlertDialog.Builder(MainActivity.this);
+                final LinearLayout fullLayout = new LinearLayout(MainActivity.this);
+                final LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+                fullLayout.setLayoutParams(lp);
+                 
+                final LinearLayout soundLayout = new LinearLayout(MainActivity.this);
+                soundLayout.setOrientation(LinearLayout.Vertical);
+                soundLayout.setLayoutParams(lp);
+                final RelativeLayout soundTextLayout = new RelativeLayout(MainActivity.this);
+                final RelativeLayout.LayoutParams rlp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                soundTextLayout.setLayoutParams(rlp);
+                final TextView sountText = new TextView(MainActivity.this);
+                soundText.setText(R.string.sound);
+                RelativeLayout.LayoutParams soundTextLayoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                soundTextLayoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+                soundText.setLayoutParams(soundTextLayoutParams);
+                soundTextLayout.addView(soundText);
+                soundLayout.addView(soundTextLayout);
+                final RelativeLayout radioButtonLayout = new RelativeLayout(MainActivity.this);
+                radioButtonLayout.setLayoutParams(rlp);
+                final RadioGroup rg = new RadioGroup(this); 
+                rg.setLayoutParams(soundTextLayoutParams);
+                rg.setOrientation(RadioGroup.HORIZONTAL);
+                final RadioButton volume1 = new RadioButton(MainActivity.this);
+                lang1.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_volume_up_indicator, 0);
+                final RadioButton volume2 = new RadioButton(MainActivity.this);
+                lang2.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_volume_off_indicator, 0);
+                rg.addView(volume1);
+                rg.addView(volume2);
+                radioButtonLayout.addView(rg);
+                soundLayout.addView(radioButtonLayout);
+                fullLayout.addView(soundLayout);
+                
+                soundText.setText(R.string.language);
+                fullLayout.addView(soundTextLayout);
+                final RelativeLayout radioButtonLangLayout = new RelativeLayout(MainActivity.this);
+                radioButtonLangLayout.setLayoutParams(rlp);
+                final RadioGroup rg1 = new RadioGroup(this); 
+                rg1.setLayoutParams(soundTextLayoutParams);
+                rg1.setOrientation(RadioGroup.HORIZONTAL);
+                final RadioButton lang1 = new RadioButton(MainActivity.this);
+                lang1.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_volume_up_indicator, 0);
+                final RadioButton lang2 = new RadioButton(MainActivity.this);
+                lang2.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_volume_off_indicator, 0);
+                rg1.addView(lang1);
+                rg1.addView(lang2);
+                radioButtonLangLayout.addView(rg);
+                fullLayout.addView(radioButtonLangLayout);
+                
+                alertSettings.setPositiveButton(getResources().getString(R.string.save), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(View v){
+                        
+                    }
+                });
+                alertSettings.setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(View v){
+                        dialog.cancel();
+                    }
+                });
+                alertSettings.setCancelable(false);
+//                 final LinearLayout langLayout = new LinearLayout(MainActivtiy.this);
+//                 langLayout.setOrientation(LinearLayout.Vertical);
+//                 langLayout.setLayoutParams(lp);
+//                 final RelativeLayout languageTextLayout = new RelativeLayout(MainActivity.this);
+//                 languageTextLayout.setLayoutParams(rlp);
+            }
+        });
         final ImageView sound = (ImageView) findViewById(R.id.volume);
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         drawableChange(sound, sharedPreferences.getBoolean(getResources().getString(R.string.isVolumeEnabled), true));
