@@ -198,11 +198,11 @@ public class QuizMain extends Activity implements View.OnClickListener {
                 checkAnswer(((Button) v).getText().toString(), R.id.optionFour);
                 break;
             case R.id.next:
-                nextOrPrevious = false;
+                nextOrPrevious = true;
                 nextQuestion();
                 break;
             case R.id.previous:
-                nextOrPrevious = true;
+                nextOrPrevious = false;
                 nextQuestion();
                 break;
         }

@@ -15,6 +15,7 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -32,6 +33,7 @@ public class ChooseOcean extends ListActivity {
         setListAdapter(new ChooseOceanAdapter(getApplicationContext()));
         bundle=getIntent().getExtras();
         quizType=bundle.getInt(getResources().getString(R.string.quizType));
+        Toast.makeText(getApplicationContext(), PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getString(getResources().getString(R.string.language), "jhg"), Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -52,7 +54,7 @@ public class ChooseOcean extends ListActivity {
         startActivity(newActivity);
     }
 
-    class SingleRow {
+    private class SingleRow {
         final String _oceanName;
         final int _oceanFlagQuantity;
         SingleRow(String oceanName,int oceanFlagQuantity){
@@ -61,12 +63,12 @@ public class ChooseOcean extends ListActivity {
         }
     }
 
-    static class ViewHolderItem {
+    private static class ViewHolderItem {
         private TextView oceanName, oceanProgress;
         private ProgressBar bar;
     }
 
-    class ChooseOceanAdapter extends BaseAdapter {
+    private class ChooseOceanAdapter extends BaseAdapter {
 
         private final Context _context;
         private LayoutInflater mInflater;
